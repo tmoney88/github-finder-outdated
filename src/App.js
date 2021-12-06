@@ -13,23 +13,29 @@ class App extends Component {
   }
 
   static propTypes = {
-    searchUsers: PropTypes.func.isRequired
+    searchUsers: PropTypes.func.isRequired,
+    clearUsers: PropTypes.func.isRequired,
+    showClear: PropTypes.bool.isRequired
   }
 
-  //Search github users
+  // Search github users
   searchUsers = async text => {
     this.setState({ loading: true })
     const response = await Axios.get(`https://api.github.com/search/users?q=${text}&client_id=${process.env.REACT_APP_GITHUB_CLIENT_ID}&client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`)
     this.setState({ users: response.data.items, loading: false })
   }
 
+  // Clear users from state
+  clearUsers = () => this.setState({ users: [], loading: false })
+
   render() {
+    const { users, loading } = this.state
     return (
       <div className="App">
         <Navbar />
         <div className="container">
-          <Search searchUsers={this.searchUsers} />
-          <Users loading={this.state.loading} users={this.state.users} />
+          <Search clearUsers={this.clearUsers} searchUsers={this.searchUsers} showClear={users.length > 0 ? true : false} />
+          <Users loading={loading} users={users} />
         </div>
       </div>
     )
