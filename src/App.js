@@ -4,12 +4,14 @@ import Navbar from "./components/layout/Navbar"
 import Users from "./components/users/Users"
 import Axios from "axios"
 import Search from "./components/users/Search"
+import Alert from "./components/layout/Alert"
 import PropTypes from "prop-types"
 
 class App extends Component {
   state = {
     users: [],
-    loading: false
+    loading: false,
+    alert: null
   }
 
   static propTypes = {
@@ -28,13 +30,20 @@ class App extends Component {
   // Clear users from state
   clearUsers = () => this.setState({ users: [], loading: false })
 
+  // Set Alert
+  setAlert = (msg, type) => {
+    this.setState({ alert: { msg: msg, type: type } })
+    setTimeout(() => this.setState({ alert: null }), 4000)
+  }
+
   render() {
     const { users, loading } = this.state
     return (
       <div className="App">
         <Navbar />
         <div className="container">
-          <Search clearUsers={this.clearUsers} searchUsers={this.searchUsers} showClear={users.length > 0 ? true : false} />
+          <Alert alert={this.state.alert} />
+          <Search clearUsers={this.clearUsers} searchUsers={this.searchUsers} showClear={users.length > 0 ? true : false} setAlert={this.setAlert} />
           <Users loading={loading} users={users} />
         </div>
       </div>
